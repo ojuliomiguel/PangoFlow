@@ -1,0 +1,20 @@
+{:source-paths ["src/main"]
+ :dev-http {8020 "public"}
+ :builds
+ {:popup
+  {:target :browser
+   :output-dir "public/js"
+   :asset-path "js"
+   :modules {:popup {:init-fn pangoflow.popup/init}}}
+
+  :dashboard
+  {:target :browser
+   :output-dir "public/js"
+   :asset-path "js"
+   :modules {:dashboard {:init-fn pangoflow.dashboard/init}}}
+
+  :background
+  {:target :browser
+   :output-dir "public/js"
+   :asset-path "js"
+   :modules {:background {:init-fn pangoflow.background/init}}}}}

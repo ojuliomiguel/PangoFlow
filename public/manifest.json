@@ -1,0 +1,15 @@
+{
+  "manifest_version": 3,
+  "name": "PangoFlow",
+  "version": "0.1.0",
+  "description": "Build your flow, one block at a time.",
+  "action": {
+    "default_title": "PangoFlow",
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "service_worker": "js/background.js"
+  },
+  "options_page": "dashboard.html",
+  "permissions": ["storage"]
+}
