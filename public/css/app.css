@@ -10,10 +10,17 @@
 }
 
 body {
-  min-width: 320px;
-  min-height: 100vh;
   margin: 0;
   background: #0d151c;
+}
+
+body.popup {
+  min-width: 320px;
+}
+
+body:not(.popup) {
+  min-width: 320px;
+  min-height: 100vh;
 }
 
 #app {

@@ -4,18 +4,21 @@
  :builds
  {:popup
   {:target :browser
+   :devtools {:enabled false :use-document-host false}
    :output-dir "public/js"
    :asset-path "js"
    :modules {:popup {:init-fn pangoflow.popup/init}}}
 
   :dashboard
   {:target :browser
+   :devtools {:enabled false :use-document-host false}
    :output-dir "public/js"
    :asset-path "js"
    :modules {:dashboard {:init-fn pangoflow.dashboard/init}}}
 
   :background
   {:target :browser
+   :devtools {:enabled false :use-document-host false}
    :output-dir "public/js"
    :asset-path "js"
    :modules {:background {:init-fn pangoflow.background/init}}}
