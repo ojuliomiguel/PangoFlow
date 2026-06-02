@@ -6,9 +6,14 @@
   "scripts": {
     "dev": "shadow-cljs watch popup dashboard background",
     "build": "shadow-cljs release popup dashboard background",
-    "clean": "rm -rf .shadow-cljs public/js target"
+    "clean": "rm -rf .shadow-cljs public/js target",
+    "test": "shadow-cljs compile test && node target/test.js"
   },
   "devDependencies": {
-    "shadow-cljs": "^3.2.0"
+    "shadow-cljs": "^3.4.11"
+  },
+  "dependencies": {
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7"
   }
 }

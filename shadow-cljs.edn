@@ -1,4 +1,5 @@
-{:source-paths ["src/main"]
+{:source-paths ["src/main" "src/test"]
+ :dependencies [[reagent "2.0.1"]]
  :dev-http {8020 "public"}
  :builds
  {:popup
@@ -17,4 +18,9 @@
   {:target :browser
    :output-dir "public/js"
    :asset-path "js"
-   :modules {:background {:init-fn pangoflow.background/init}}}}}
+   :modules {:background {:init-fn pangoflow.background/init}}}
+
+  :test
+  {:target :node-test
+   :output-to "target/test.js"
+   :ns-regexp "pangoflow\\..*-test$"}}}
