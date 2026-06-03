@@ -18,6 +18,23 @@ body.popup {
   min-width: 320px;
 }
 
+body.popup #app {
+  padding: 16px;
+}
+
+.popup-shell {
+  gap: 14px;
+}
+
+.popup-lead {
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.popup-shell .btn {
+  width: 100%;
+}
+
 body:not(.popup) {
   min-width: 320px;
   min-height: 100vh;
@@ -43,5 +60,275 @@ h1 {
 }
 
 p {
+  color: #9bb2bf;
+}
+
+/* Dashboard */
+
+.dashboard {
+  display: grid;
+  gap: 28px;
+  max-width: 960px;
+}
+
+.dashboard__header h1 {
+  font-size: 28px;
+}
+
+.dashboard__actions {
+  display: flex;
+  gap: 12px;
+}
+
+h2 {
+  margin: 0 0 12px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+/* Template picker */
+
+.template-picker {
+  display: grid;
+  gap: 16px;
+}
+
+.template-picker__title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.template-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.template-card {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 14px;
+  border: 1px solid #24313b;
+  border-radius: 12px;
+  background: #121c24;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.template-card:hover {
+  border-color: #3d5566;
+  background: #162029;
+}
+
+.template-card--selected {
+  border-color: #5eead4;
+  background: #15242c;
+}
+
+.template-card__swatch {
+  flex-shrink: 0;
+  width: 12px;
+  height: 48px;
+  border-radius: 4px;
+}
+
+.template-card__body {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.template-card__name {
+  font-size: 15px;
+}
+
+.template-card__mode,
+.template-card__rule {
+  font-size: 12px;
+  color: #9bb2bf;
+}
+
+/* Activity form */
+
+.activity-form {
+  display: grid;
+  gap: 16px;
+  padding: 20px;
+  border: 1px solid #24313b;
+  border-radius: 12px;
+  background: #121c24;
+}
+
+.activity-form__title {
+  margin: 0;
+  font-size: 18px;
+}
+
+.form-field {
+  display: grid;
+  gap: 6px;
+  font-size: 14px;
+}
+
+.form-field > span {
+  color: #9bb2bf;
+}
+
+.form-field input[type="text"],
+.form-field input[type="number"],
+.form-field select {
+  padding: 8px 10px;
+  border: 1px solid #24313b;
+  border-radius: 8px;
+  background: #0d151c;
+  color: #edf7fb;
+  font: inherit;
+}
+
+.form-field--checkbox {
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 8px;
+}
+
+.form-field--checkbox input {
+  width: 16px;
+  height: 16px;
+}
+
+.form-errors {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: #3f1d1d;
+  color: #fca5a5;
+  list-style: disc inside;
+  font-size: 13px;
+}
+
+.swatch-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.swatch {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 2px solid transparent;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.swatch--selected {
+  border-color: #edf7fb;
+  box-shadow: 0 0 0 2px #0d151c;
+}
+
+.color-input {
+  width: 48px;
+  height: 32px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.block-rule-note {
+  margin: 0;
+  font-size: 13px;
+  color: #9bb2bf;
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* Buttons */
+
+.btn {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  font: inherit;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.btn--primary {
+  background: #14b8a6;
+  color: #042f2e;
+}
+
+.btn--primary:hover {
+  background: #2dd4bf;
+}
+
+.btn--secondary {
+  background: #24313b;
+  color: #edf7fb;
+}
+
+.btn--secondary:hover {
+  background: #3d5566;
+}
+
+.btn--ghost {
+  background: transparent;
+  color: #9bb2bf;
+  border: 1px solid #24313b;
+}
+
+.btn--ghost:hover {
+  color: #edf7fb;
+  border-color: #3d5566;
+}
+
+/* Activity list */
+
+.activity-list {
+  display: grid;
+  gap: 12px;
+}
+
+.activity-list__items {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 8px;
+}
+
+.activity-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid #24313b;
+  border-radius: 10px;
+  background: #121c24;
+}
+
+.activity-row__swatch {
+  flex-shrink: 0;
+  width: 10px;
+  height: 36px;
+  border-radius: 3px;
+}
+
+.activity-row__info {
+  display: grid;
+  gap: 2px;
+}
+
+.activity-row__meta {
+  font-size: 13px;
   color: #9bb2bf;
 }
