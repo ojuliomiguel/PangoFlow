@@ -7,21 +7,21 @@
    :devtools {:enabled false :use-document-host false}
    :output-dir "public/js"
    :asset-path "js"
-   :modules {:popup {:init-fn pangoflow.popup/init}}}
+   :modules {:popup {:init-fn pangoflow.app.popup/init}}}
 
   :dashboard
   {:target :browser
    :devtools {:enabled false :use-document-host false}
    :output-dir "public/js"
    :asset-path "js"
-   :modules {:dashboard {:init-fn pangoflow.dashboard/init}}}
+   :modules {:dashboard {:init-fn pangoflow.app.dashboard/init}}}
 
   :background
   {:target :browser
    :devtools {:enabled false :use-document-host false}
    :output-dir "public/js"
    :asset-path "js"
-   :modules {:background {:init-fn pangoflow.background/init}}}
+   :modules {:background {:init-fn pangoflow.app.background/init}}}
 
   :test
   {:target :node-test
