@@ -6,7 +6,7 @@
   (save-activities! [backend data])
   (on-change [backend callback]))
 
-;; Memory backend for tests
+
 (defrecord MemoryStorageBackend [store-atom listeners storage-key]
   IStorageBackend
   (load-activities! [_]
@@ -23,7 +23,7 @@
 (defn create-memory-backend []
   (->MemoryStorageBackend (atom nil) (atom #{}) "pangoflow:v1:activities"))
 
-;; Chrome storage backend for production
+
 (deftype ChromeStorageBackend [storage-key]
   IStorageBackend
   (load-activities! [_]
@@ -56,3 +56,44 @@
 
 (def memory-storage-backend (create-memory-backend))
 (def chrome-storage-backend (ChromeStorageBackend. "pangoflow:v1:activities"))
+
+
+(def ^:private current-version 1)
+
+(defn empty-payload []
+  {:version current-version
+   :activities []
+   :entries []
+   :active-activity-id nil})
+
+(defn get-activities [payload]
+  (:activities payload []))
+
+(defn get-entries [payload]
+  (:entries payload []))
+
+(defn get-active-activity-id [payload]
+  (:active-activity-id payload))
+
+(defn set-active-activity-id [payload activity-id]
+  (assoc payload :active-activity-id activity-id))
+
+(defn derive-active-activity-id [payload]
+  (or (:active-activity-id payload)
+      (when-let [first-activity (first (:activities payload))]
+        (:id first-activity))))
+
+
+(defn- migrate-to-v1 [data]
+  (if (map? data)
+    data
+    (assoc (empty-payload) :activities (vec data))))
+
+
+(defn load-history! [backend]
+  (.then (load-activities! backend)
+         (fn [raw]
+           (migrate-to-v1 raw))))
+
+(defn save-history! [backend payload]
+  (save-activities! backend payload))

@@ -6,11 +6,13 @@
             [pangoflow.dashboard-forms :as df]
             [pangoflow.local-history :as lh]))
 
-(defonce activities (r/atom []))
+(defonce history (r/atom (lh/empty-payload)))
 (defonce selected-template-id (r/atom nil))
 (defonce form-data (r/atom nil))
 (defonce form-errors (r/atom nil))
 (defonce creating? (r/atom false))
+
+(defn- activities [] (lh/get-activities @history))
 
 (defn- select-template! [template-id]
   (reset! selected-template-id template-id)
@@ -30,10 +32,12 @@
   (reset! form-errors nil))
 
 (defn- save-activity! [activity]
-  (let [updated (conj @activities activity)]
-    (-> (lh/save-activities! lh/chrome-storage-backend updated)
+  (let [updated-payload (-> @history
+                            (update :activities conj activity)
+                            (lh/set-active-activity-id (:id activity)))]
+    (-> (lh/save-history! lh/chrome-storage-backend updated-payload)
         (.then (fn []
-                 (reset! activities updated)
+                 (reset! history updated-payload)
                  (reset! creating? false)
                  (reset! selected-template-id nil)
                  (reset! form-data nil)
@@ -69,7 +73,7 @@
 (defn template-picker []
   [:section.template-picker
    [:h2.template-picker__title
-    (if (seq @activities)
+    (if (seq (activities))
       "Choose a template"
       "Create your first Activity")]
    [:div.template-grid
@@ -151,7 +155,7 @@
        [:div.form-actions
         [:button.btn.btn--primary {:type "button" :on-click submit-form!}
          "Create Activity"]
-        (when (seq @activities)
+        (when (seq (activities))
           [:button.btn.btn--ghost {:type "button" :on-click cancel-creating!}
            "Cancel"])]])))
 
@@ -171,20 +175,20 @@
   [:section.activity-list
    [:h2 "Your Activities"]
    [:ul.activity-list__items
-    (for [a @activities]
+    (for [a (activities)]
       [activity-row a])]])
 
 (defn dashboard-shell []
   [:div.dashboard
    [:header.dashboard__header
     [:h1 "PangoFlow Dashboard"]]
-   (when (seq @activities)
+   (when (seq (activities))
      [activity-list])
-   (when (or (empty? @activities) @creating?)
+   (when (or (empty? (activities)) @creating?)
      [template-picker])
    (when @selected-template-id
      [activity-form])
-   (when (and (seq @activities) (not @creating?) (nil? @selected-template-id))
+   (when (and (seq (activities)) (not @creating?) (nil? @selected-template-id))
      [:div.dashboard__actions
       [:button.btn.btn--secondary {:type "button" :on-click start-creating!}
        "Create another"]])])
@@ -197,10 +201,10 @@
     (rdom/render @root [dashboard-shell])))
 
 (defn init []
-  (-> (lh/load-activities! lh/chrome-storage-backend)
+  (-> (lh/load-history! lh/chrome-storage-backend)
       (.then (fn [loaded]
-               (reset! activities (vec loaded))
+               (reset! history loaded)
                (mount!)))
       (.catch (fn [_]
-                (reset! activities [])
+                (reset! history (lh/empty-payload))
                 (mount!)))))
