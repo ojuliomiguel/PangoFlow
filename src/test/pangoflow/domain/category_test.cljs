@@ -1,7 +1,7 @@
-(ns pangoflow.categories-test
+(ns pangoflow.domain.category-test
   (:require [cljs.test :refer [deftest is]]
             [clojure.string :as str]
-            [pangoflow.categories :as cats]))
+            [pangoflow.domain.category :as cats]))
 
 (deftest get-categories-returns-all-six
   (is (= #{:learning :wellness :health :craft :connection :discipline}

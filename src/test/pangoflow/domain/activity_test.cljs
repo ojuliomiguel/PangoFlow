@@ -1,7 +1,7 @@
-(ns pangoflow.activity-model-test
+(ns pangoflow.domain.activity-test
   (:require [cljs.test :refer [deftest is]]
             [clojure.string :as str]
-            [pangoflow.activity-model :as am]))
+            [pangoflow.domain.activity :as am]))
 
 (deftest get-templates-returns-six-templates
   (is (= 6 (count (am/get-templates)))))

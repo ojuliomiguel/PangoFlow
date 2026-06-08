@@ -1,18 +1,40 @@
-(ns pangoflow.dashboard
+(ns pangoflow.app.dashboard
   (:require [reagent.core :as r]
             [reagent.dom.client :as rdom]
-            [pangoflow.activity-model :as am]
-            [pangoflow.categories :as cats]
-            [pangoflow.dashboard-forms :as df]
-            [pangoflow.local-history :as lh]))
+            [pangoflow.domain.activity :as am]
+            [pangoflow.domain.category :as cats]
+            [pangoflow.ui.dashboard-forms :as df]
+            [pangoflow.history.local-history :as lh]
+            [pangoflow.domain.entry :as entry]
+            [pangoflow.domain.block-rule :as br]))
 
 (defonce history (r/atom (lh/empty-payload)))
 (defonce selected-template-id (r/atom nil))
 (defonce form-data (r/atom nil))
 (defonce form-errors (r/atom nil))
 (defonce creating? (r/atom false))
+(defonce expanded-activity-id (r/atom nil))
+(defonce entry-value (r/atom nil))
+(defonce entry-error (r/atom nil))
 
 (defn- activities [] (lh/get-activities @history))
+
+(defn- today-str []
+  (let [d (js/Date.)]
+    (str (.getFullYear d)
+         "-"
+         (.padStart (str (+ 1 (.getMonth d))) 2 "0")
+         "-"
+         (.padStart (str (.getDate d)) 2 "0"))))
+
+(defn- today-entries-for [activity-id]
+  (lh/get-entries-for-activity-on-date @history activity-id (today-str)))
+
+(defn- today-blocks [activity]
+  (let [rule (am/activity-block-rule activity)]
+    (->> (today-entries-for (:id activity))
+         (map #(br/entry->blocks % rule))
+         (reduce + 0))))
 
 (defn- select-template! [template-id]
   (reset! selected-template-id template-id)
@@ -52,6 +74,25 @@
 
 (defn- update-form! [k v]
   (swap! form-data assoc k v))
+
+(defn- add-manual-entry! [activity]
+  (let [v @entry-value
+        mode (am/activity-tracking-mode activity)
+        error (entry/validate-entry-value mode v)]
+    (if error
+      (reset! entry-error error)
+      (let [e (entry/make-entry (:id activity) (today-str) v)
+            updated (lh/add-entry @history e)]
+        (reset! history updated)
+        (reset! entry-value nil)
+        (reset! entry-error nil)
+        (lh/save-history! lh/chrome-storage-backend updated)))))
+
+(defn- toggle-expanded! [activity-id]
+  (reset! expanded-activity-id
+          (when (not= activity-id @expanded-activity-id) activity-id))
+  (reset! entry-value nil)
+  (reset! entry-error nil))
 
 (defn- category-option [[kw label]]
   ^{:key (name kw)} [:option {:value (name kw)} label])
@@ -159,17 +200,55 @@
           [:button.btn.btn--ghost {:type "button" :on-click cancel-creating!}
            "Cancel"])]])))
 
+(defn- manual-entry-form [activity]
+  (let [mode (am/activity-tracking-mode activity)
+        block-rule (am/activity-block-rule activity)
+        entries (today-entries-for (:id activity))
+        total (today-blocks activity)]
+    [:div.manual-entry
+     [:div.manual-entry__total
+      [:strong "Today: "]
+      (br/format-blocks total)]
+     (when (seq entries)
+       [:ul.manual-entry__list
+        (for [e (reverse entries)]
+          ^{:key (:id e)}
+          [:li (str (:value e) " " (name (:unit block-rule)))])])
+     [:div.manual-entry__form
+      [:input.manual-entry__input
+       {:type "number"
+        :min 1
+        :placeholder (case mode
+                       :completion "1"
+                       (str (:amount block-rule)))
+        :value (or @entry-value "")
+        :on-change #(let [v (js/parseInt (.. % -target -value) 10)]
+                      (reset! entry-value (when (pos? v) v))
+                      (reset! entry-error nil))}]
+      [:button.btn.btn--primary
+       {:type "button"
+        :on-click #(add-manual-entry! activity)}
+       "Add Entry"]]
+     (when @entry-error
+       [:p.manual-entry__error @entry-error])]))
+
 (defn activity-row [activity]
-  (let [cat (am/activity-category activity)]
+  (let [cat (am/activity-category activity)
+        expanded? (= (:id activity) @expanded-activity-id)]
     [:li.activity-row {:key (:id activity)}
-     [:span.activity-row__swatch
-      {:style {:background-color (am/activity-accent-color activity)}}]
-     [:span.activity-row__info
-      [:strong (am/activity-name activity)]
-      [:span.activity-row__meta
-       (df/tracking-mode-label (am/activity-tracking-mode activity))
-       (when cat
-         (str " · " (cats/category-label cat)))]]]))
+     [:button.activity-row__toggle
+      {:type "button"
+       :on-click #(toggle-expanded! (:id activity))}
+      [:span.activity-row__swatch
+       {:style {:background-color (am/activity-accent-color activity)}}]
+      [:span.activity-row__info
+       [:strong (am/activity-name activity)]
+       [:span.activity-row__meta
+        (df/tracking-mode-label (am/activity-tracking-mode activity))
+        (when cat
+          (str " · " (cats/category-label cat)))]]]
+     (when expanded?
+       [manual-entry-form activity])]))
 
 (defn activity-list []
   [:section.activity-list

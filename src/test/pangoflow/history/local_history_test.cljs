@@ -1,6 +1,6 @@
-(ns pangoflow.local-history-test
+(ns pangoflow.history.local-history-test
   (:require [cljs.test :refer [deftest is async]]
-            [pangoflow.local-history :as lh]))
+            [pangoflow.history.local-history :as lh]))
 
 (defn- sample-activity []
   {:id "abc" :name "Reading" :tracking-mode :count
@@ -75,3 +75,35 @@
                                    (is (= true @called?))
                                    (done))
                                  10))))))
+
+(deftest add-entry-conjions-to-payload
+  (let [entry {:id "e1" :activity-id "abc" :date "2026-06-07" :value 1}
+        payload (lh/add-entry (lh/empty-payload) entry)]
+    (is (= [entry] (lh/get-entries payload)))))
+
+(deftest add-entry-preserves-existing-entries
+  (let [e1 {:id "e1" :activity-id "abc" :date "2026-06-07" :value 1}
+        e2 {:id "e2" :activity-id "abc" :date "2026-06-07" :value 2}
+        payload (-> (lh/empty-payload)
+                    (lh/add-entry e1)
+                    (lh/add-entry e2))]
+    (is (= [e1 e2] (lh/get-entries payload)))))
+
+(deftest get-entries-for-activity-filters-by-activity-id
+  (let [e1 {:id "e1" :activity-id "abc" :date "2026-06-07" :value 1}
+        e2 {:id "e2" :activity-id "def" :date "2026-06-07" :value 2}
+        payload (-> (lh/empty-payload)
+                    (lh/add-entry e1)
+                    (lh/add-entry e2))]
+    (is (= [e1] (lh/get-entries-for-activity payload "abc")))
+    (is (= [e2] (lh/get-entries-for-activity payload "def")))))
+
+(deftest get-entries-for-activity-on-date-filters-by-date
+  (let [e1 {:id "e1" :activity-id "abc" :date "2026-06-07" :value 1}
+        e2 {:id "e2" :activity-id "abc" :date "2026-06-08" :value 2}
+        payload (-> (lh/empty-payload)
+                    (lh/add-entry e1)
+                    (lh/add-entry e2))]
+    (is (= [e1] (lh/get-entries-for-activity-on-date payload "abc" "2026-06-07")))
+    (is (= [e2] (lh/get-entries-for-activity-on-date payload "abc" "2026-06-08")))
+    (is (= [] (lh/get-entries-for-activity-on-date payload "abc" "2026-06-09")))))

@@ -1,4 +1,4 @@
-(ns pangoflow.local-history
+(ns pangoflow.history.local-history
   (:require [clojure.walk :as walk]))
 
 (defprotocol IStorageBackend
@@ -83,6 +83,16 @@
       (when-let [first-activity (first (:activities payload))]
         (:id first-activity))))
 
+(defn add-entry [payload entry]
+  (update payload :entries conj entry))
+
+(defn get-entries-for-activity [payload activity-id]
+  (into [] (filter #(= activity-id (:activity-id %))) (:entries payload)))
+
+(defn get-entries-for-activity-on-date [payload activity-id date]
+  (into [] (filter #(and (= activity-id (:activity-id %))
+                         (= date (:date %))))
+        (:entries payload)))
 
 (defn- migrate-to-v1 [data]
   (if (map? data)

@@ -1,6 +1,6 @@
-(ns pangoflow.activity-model
+(ns pangoflow.domain.activity
   (:require [clojure.string :as str]
-            [pangoflow.categories :as cats]))
+            [pangoflow.domain.category :as cats]))
 
 (def ^:private valid-tracking-modes #{:completion :count :duration})
 

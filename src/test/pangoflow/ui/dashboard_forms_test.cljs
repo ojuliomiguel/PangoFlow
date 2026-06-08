@@ -1,6 +1,6 @@
-(ns pangoflow.dashboard-forms-test
+(ns pangoflow.ui.dashboard-forms-test
   (:require [cljs.test :refer [deftest is]]
-            [pangoflow.dashboard-forms :as df]))
+            [pangoflow.ui.dashboard-forms :as df]))
 
 (deftest block-rule-description-formats-count-rule
   (is (= "10 pages = 1 block"

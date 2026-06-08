@@ -1,5 +1,5 @@
-(ns pangoflow.dashboard-forms
-  (:require [pangoflow.activity-model :as am]))
+(ns pangoflow.ui.dashboard-forms
+  (:require [pangoflow.domain.activity :as am]))
 
 (def preset-accent-colors
   ["#3b82f6" "#8b5cf6" "#ef4444" "#f59e0b" "#10b981" "#ec4899"])

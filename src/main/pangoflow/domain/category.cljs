@@ -1,4 +1,4 @@
-(ns pangoflow.categories)
+(ns pangoflow.domain.category)
 
 (def ^:private categories
   #{:learning :wellness :health :craft :connection :discipline})
