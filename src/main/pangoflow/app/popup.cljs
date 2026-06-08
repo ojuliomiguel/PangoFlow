@@ -18,7 +18,7 @@
 
 (defn- active-activity []
   (let [active-id (lh/derive-active-activity-id @history)]
-    (some #(when (= (:id active-id) %) %)
+    (some #(when (= active-id (:id %)) %)
           (lh/get-activities @history))))
 
 (defn- switch-active-activity! [activity-id]
@@ -138,17 +138,23 @@
        :on-click open-dashboard!}
       "Open Dashboard"]]))
 
+(defonce popup-root (atom nil))
+
 (defn popup-view []
   (if (seq (lh/get-activities @history))
     [popup-active-state]
     [popup-empty-state]))
 
+(defn- mount! []
+  (when-let [el (.getElementById js/document "app")]
+    (reset! popup-root (rdom/create-root el))
+    (rdom/render @popup-root [popup-view])))
+
 (defn init []
   (-> (lh/load-history! lh/chrome-storage-backend)
       (.then (fn [loaded]
-               (reset! history loaded)))
+               (reset! history loaded)
+               (mount!)))
       (.catch (fn [_]
-                (reset! history (lh/empty-payload))))
-      (.then (fn []
-               (when-let [el (.getElementById js/document "app")]
-                 (rdom/render (rdom/create-root el) [popup-view]))))))
+                (reset! history (lh/empty-payload))
+                (mount!)))))

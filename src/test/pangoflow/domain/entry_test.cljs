@@ -1,5 +1,6 @@
 (ns pangoflow.domain.entry-test
   (:require [cljs.test :refer [deftest is]]
+            [clojure.string :as str]
             [pangoflow.domain.entry :as entry]))
 
 (deftest make-entry-returns-map-with-required-keys

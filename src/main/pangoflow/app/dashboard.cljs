@@ -260,17 +260,16 @@
 (defn dashboard-shell []
   [:div.dashboard
    [:header.dashboard__header
-    [:h1 "PangoFlow Dashboard"]]
+    [:h1 "Pango" [:span "Flow"]]
+    (when (and (seq (activities)) (not @creating?) (nil? @selected-template-id))
+      [:button.btn.btn--secondary {:type "button" :on-click start-creating!}
+       "+ New Activity"])]
    (when (seq (activities))
      [activity-list])
    (when (or (empty? (activities)) @creating?)
      [template-picker])
    (when @selected-template-id
-     [activity-form])
-   (when (and (seq (activities)) (not @creating?) (nil? @selected-template-id))
-     [:div.dashboard__actions
-      [:button.btn.btn--secondary {:type "button" :on-click start-creating!}
-       "Create another"]])])
+     [activity-form])])
 
 (defonce root (atom nil))
 

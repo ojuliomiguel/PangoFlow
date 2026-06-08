@@ -1,5 +1,6 @@
 (ns pangoflow.domain.block-rule-test
   (:require [cljs.test :refer [deftest is]]
+            [clojure.string :as str]
             [pangoflow.domain.block-rule :as br]))
 
 (deftest entry->blocks-completion-returns-one
